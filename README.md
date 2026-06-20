@@ -20,7 +20,7 @@ completed during my internship.
 |---|---------|-------------|--------|
 | 1 | Data Cleaning & Preparation | Cleaned 1200-row e-commerce dataset | Done |
 | 2 | Exploratory Data Analysis(EDA) | Analyze Patterns, Trends & Distribution | Done |
-| 3 | Coming Soon | - | Pending |
+| 3 | SQL Data Analysis | SQL queries using SQLite3 | Done |
 | 4 | Coming Soon | - | Pending |
 
 ---
