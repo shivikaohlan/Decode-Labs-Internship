@@ -1,0 +1,245 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "7ee0f6c8-e08a-479c-a241-eca05e382008",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Database created!\n"
+     ]
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "import sqlite3\n",
+    "df = pd.read_excel(\"Cleaned_Dataset.xlsx\")\n",
+    "conn = sqlite3.connect(\"ecommerce.db\")\n",
+    "df.to_sql(\"orders\",conn, if_exists=\"replace\", index=False)\n",
+    "print(\"Database created!\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "b0f15840-2335-45ff-9d04-eeeb342f982a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "result = pd.read_sql_query(\"SELECT * FROM orders LIMIT 5\", conn)\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "6fe615ee-fe60-43c4-bfcf-c6bbd60ec1ec",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "   Product  Total_Orders\n",
+      "0  Printer           181\n",
+      "1   Tablet           179\n",
+      "2    Chair           178\n",
+      "3   Laptop           173\n",
+      "4     Desk           170\n",
+      "5  Monitor           163\n",
+      "6    Phone           156\n"
+     ]
+    }
+   ],
+   "source": [
+    "result = pd.read_sql_query(\"\"\"\n",
+    "SELECT Product, COUNT(*) as Total_Orders\n",
+    "FROM orders\n",
+    "GROUP BY Product\n",
+    "ORDER BY Total_Orders DESC\"\"\", conn)\n",
+    "print(result)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "8aa798c7-3ebf-4100-bbb7-51285473d538",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "   Product  Total_Revenue    Avg_Price\n",
+      "0    Chair      195620.11  1098.989382\n",
+      "1  Printer      195612.61  1080.732652\n",
+      "2   Laptop      192126.56  1110.558150\n",
+      "3   Tablet      186568.95  1042.284637\n",
+      "4  Monitor      175651.41  1077.616012\n",
+      "5     Desk      167459.93   985.058412\n",
+      "6    Phone      151722.39   972.579423\n"
+     ]
+    }
+   ],
+   "source": [
+    "result = pd.read_sql_query(\"\"\"\n",
+    "SELECT Product, \n",
+    "SUM(TotalPrice) as Total_Revenue,\n",
+    "AVG(TotalPrice) as Avg_Price\n",
+    "FROM orders\n",
+    "GROUP BY Product\n",
+    "ORDER BY Total_Revenue DESC\n",
+    "\"\"\", conn)\n",
+    "print(result)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "5a714510-0003-4d87-b279-c4649460918b",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "     OrderID                 Date CustomerID  Product  Quantity  UnitPrice  \\\n",
+      "0  ORD200789  2023-08-17 00:00:00     C57276   Tablet         5     691.28   \n",
+      "1  ORD200632  2023-05-02 00:00:00     C67260   Laptop         5     678.16   \n",
+      "2  ORD201065  2023-10-30 00:00:00     C47778  Printer         5     666.80   \n",
+      "3  ORD200361  2024-06-29 00:00:00     C53464  Printer         5     659.85   \n",
+      "4  ORD200837  2025-06-14 00:00:00     C88029    Chair         5     655.55   \n",
+      "5  ORD201079  2024-06-20 00:00:00     C89979    Phone         5     634.00   \n",
+      "6  ORD200511  2024-03-15 00:00:00     C11415  Monitor         5     575.24   \n",
+      "7  ORD200578  2024-10-10 00:00:00     C50415  Monitor         5     566.07   \n",
+      "8  ORD200883  2025-05-13 00:00:00     C43595  Printer         5     561.48   \n",
+      "9  ORD200769  2023-07-06 00:00:00     C13366  Printer         4     678.55   \n",
+      "\n",
+      "  ShippingAddress PaymentMethod OrderStatus TrackingNumber  ItemsInCart  \\\n",
+      "0     183 Main St        Online   Delivered    TRK75899752           10   \n",
+      "1     463 Main St     Gift Card   Delivered    TRK38229104            7   \n",
+      "2     488 Main St    Debit Card   Delivered    TRK79504329            7   \n",
+      "3     197 Main St   Credit Card   Delivered    TRK32743531            9   \n",
+      "4     282 Main St        Online   Delivered    TRK59701278            5   \n",
+      "5     144 Main St     Gift Card   Delivered    TRK99055909            8   \n",
+      "6     267 Main St          Cash   Delivered    TRK65061457            7   \n",
+      "7     587 Main St   Credit Card   Delivered    TRK41345634            6   \n",
+      "8     451 Main St        Online   Delivered    TRK25317348            9   \n",
+      "9     568 Main St          Cash   Delivered    TRK98691410            5   \n",
+      "\n",
+      "  CouponCode ReferralSource  TotalPrice  \n",
+      "0     SAVE10          Email     3456.40  \n",
+      "1   WINTER15       Facebook     3390.80  \n",
+      "2     SAVE10       Referral     3334.00  \n",
+      "3     SAVE10       Facebook     3299.25  \n",
+      "4  No Coupon          Email     3277.75  \n",
+      "5  No Coupon          Email     3170.00  \n",
+      "6   WINTER15          Email     2876.20  \n",
+      "7     SAVE10      Instagram     2830.35  \n",
+      "8   FREESHIP       Facebook     2807.40  \n",
+      "9  No Coupon          Email     2714.20  \n"
+     ]
+    }
+   ],
+   "source": [
+    "result = pd.read_sql_query(\"\"\"\n",
+    "SELECT * FROM orders\n",
+    "WHERE OrderStatus = 'Delivered'\n",
+    "ORDER BY TotalPrice DESC\n",
+    "LIMIT 10\n",
+    "\"\"\", conn)\n",
+    "print(result)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "715878c1-8328-4451-ada9-131e93943e2d",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "  PaymentMethod  Total_Orders  Total_Revenue\n",
+      "0        Online           258      262442.94\n",
+      "1          Cash           246      259786.29\n",
+      "2   Credit Card           234      263847.63\n",
+      "3    Debit Card           232      232361.18\n",
+      "4     Gift Card           230      246323.92\n"
+     ]
+    }
+   ],
+   "source": [
+    "result = pd.read_sql_query(\"\"\"\n",
+    "SELECT PaymentMethod, \n",
+    "COUNT(*) as Total_Orders,\n",
+    "SUM(TotalPrice) as Total_Revenue\n",
+    "FROM orders\n",
+    "GROUP BY PaymentMethod\n",
+    "ORDER BY Total_Orders DESC\n",
+    "\"\"\", conn)\n",
+    "print(result)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "73512e59-bed9-4991-ab3e-8a63999094d9",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "✅ SQL Summary saved!\n"
+     ]
+    }
+   ],
+   "source": [
+    "summary = pd.read_sql_query(\"\"\"\n",
+    "SELECT Product,\n",
+    "COUNT(*) as Total_Orders,\n",
+    "SUM(TotalPrice) as Total_Revenue,\n",
+    "AVG(TotalPrice) as Avg_Price\n",
+    "FROM orders\n",
+    "GROUP BY Product\n",
+    "\"\"\", conn)\n",
+    "summary.to_excel(\"SQL_Summary.xlsx\", index=False)\n",
+    "print(\"✅ SQL Summary saved!\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "cf219ab2-d0c4-49c8-8d58-88418624db24",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python [conda env:base] *",
+   "language": "python",
+   "name": "conda-base-py"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.13.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
