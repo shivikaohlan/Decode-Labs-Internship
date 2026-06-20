@@ -19,7 +19,7 @@ completed during my internship.
 | # | Project | Description | Status |
 |---|---------|-------------|--------|
 | 1 | Data Cleaning & Preparation | Cleaned 1200-row e-commerce dataset | Done |
-| 2 | Coming Soon | - | Pending |
+| 2 | Exploratory Data Analysis(EDA) | Analyze Patterns, Trends & Distribution | Done |
 | 3 | Coming Soon | - | Pending |
 | 4 | Coming Soon | - | Pending |
 
